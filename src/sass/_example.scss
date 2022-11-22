@@ -26,3 +26,23 @@
   background-size: cover;
   background-position: center;
 }
+.info {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  &-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+.list-item {
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+img {
+  display: block;
+  max-width: 100%;
+}
