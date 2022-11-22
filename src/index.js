@@ -21,15 +21,13 @@ const unplashApi = new UnplashApi();
 const onSearchFormSubmit = async event => {
   event.preventDefault();
   unplashApi.query = event.target.elements.searchQuery.value.trim();
-  page = 1;
+  unplashApi.page = 1;
   listItems.innerHTML = '';
-
-  //   if(data.data.totalHits)
 
   try {
     const response = await unplashApi.fetchPhotos();
     const { data } = response;
-    console.log(data.hits);
+
     if (data.totalHits === 0) {
       alertNoEmptySearch();
       return;
@@ -105,7 +103,6 @@ const onLoadMoreBntClick = event => {
   unplashApi
     .fetchPhotos()
     .then(data => {
-      console.log(data.data.totalHits);
       const totalPage = Math.ceil(data.data.totalHits / unplashApi.perPage);
       if (unplashApi.page > totalPage) {
         alertEndOfSearch();
@@ -114,8 +111,6 @@ const onLoadMoreBntClick = event => {
         'beforeend',
         renderPhotoList(data.data.hits)
       );
-
-      console.log(totalPage);
     })
     .catch(err => {
       console.log(err);
