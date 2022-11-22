@@ -23,7 +23,10 @@ const onSearchFormSubmit = async event => {
   unplashApi.query = event.target.elements.searchQuery.value.trim();
   unplashApi.page = 1;
   listItems.innerHTML = '';
-
+  if (unplashApi.query === '') {
+    alertNoEmptySearch();
+    return;
+  }
   try {
     const response = await unplashApi.fetchPhotos();
     const { data } = response;
@@ -33,6 +36,7 @@ const onSearchFormSubmit = async event => {
       alertNoEmptySearch();
       return;
     }
+
     listItems.innerHTML = renderPhotoList(data.hits);
     loadMoreBtn.style.display = 'block';
   } catch (err) {
