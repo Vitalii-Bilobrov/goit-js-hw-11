@@ -29,6 +29,7 @@ const onSearchFormSubmit = async event => {
     const { data } = response;
     console.log(data.totalHits);
     if (data.totalHits === 0) {
+      loadMoreBtn.style.display = 'none';
       alertNoEmptySearch();
       return;
     }
