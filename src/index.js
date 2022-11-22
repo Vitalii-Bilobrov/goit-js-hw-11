@@ -27,7 +27,7 @@ const onSearchFormSubmit = async event => {
   try {
     const response = await unplashApi.fetchPhotos();
     const { data } = response;
-
+    console.log(data.totalHits);
     if (data.totalHits === 0) {
       alertNoEmptySearch();
       return;
