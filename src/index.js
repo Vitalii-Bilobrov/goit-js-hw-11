@@ -1,5 +1,5 @@
 import Notiflix from 'notiflix';
-import { UnplashApi } from './js/fetch';
+import { Pixabay } from './js/fetch';
 import { renderPhotoList } from './js/render';
 
 const form = document.querySelector('#search-form');
@@ -10,19 +10,19 @@ loadMoreBtn.style.display = 'none';
 const listItems = document.createElement('ul');
 gallery.append(listItems);
 
-const unplashApi = new UnplashApi();
+const pixabay = new Pixabay();
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  unplashApi.query = event.target.elements.searchQuery.value.trim();
-  unplashApi.page = 1;
+  pixabay.query = event.target.elements.searchQuery.value.trim();
+  pixabay.page = 1;
   listItems.innerHTML = '';
-  if (unplashApi.query === '') {
+  if (pixabay.query === '') {
     alertNoEmptySearch();
     return;
   }
   try {
-    const response = await unplashApi.fetchPhotos();
+    const response = await pixabay.fetchPhotos();
     const { data } = response;
     console.log(data.totalHits);
     if (data.totalHits === 0) {
@@ -32,7 +32,7 @@ const onSearchFormSubmit = async event => {
     }
 
     listItems.innerHTML = renderPhotoList(data.hits);
-    if (unplashApi.perPage > data.totalHits) {
+    if (pixabay.perPage > Math.ceil(data.totalHits / pixabay.page)) {
       alertEndOfSearch();
       loadMoreBtn.style.display = 'none';
     } else {
@@ -67,13 +67,14 @@ function alertEndOfSearch() {
 }
 
 const onLoadMoreBntClick = event => {
-  unplashApi.page += 1;
+  pixabay.page += 1;
 
-  unplashApi
+  pixabay
     .fetchPhotos()
     .then(data => {
-      const totalPage = Math.ceil(data.data.totalHits / unplashApi.perPage);
-      if (unplashApi.page > totalPage) {
+      const totalPage = Math.ceil(data.data.totalHits / pixabay.perPage);
+      if (pixabay.page < totalPage) {
+      } else if (pixabay.page === totalPage) {
         alertEndOfSearch();
         loadMoreBtn.style.display = 'none';
       }

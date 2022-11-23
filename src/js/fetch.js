@@ -1,7 +1,7 @@
 'use strict';
 import axios from 'axios';
 
-export class UnplashApi {
+export class Pixabay {
   #BASE_URL = 'https://pixabay.com/api/';
   #API_KEY = '31492616-f7e5141788943e3bc0dbb552f';
   constructor() {
