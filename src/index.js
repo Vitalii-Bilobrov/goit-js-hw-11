@@ -1,5 +1,6 @@
 import Notiflix from 'notiflix';
 import { UnplashApi } from './js/fetch';
+import { renderPhotoList } from './js/render';
 
 const form = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
@@ -8,14 +9,7 @@ loadMoreBtn.style.display = 'none';
 
 const listItems = document.createElement('ul');
 gallery.append(listItems);
-listItems.style.listStyle = 'none';
-listItems.style.display = 'flex';
-listItems.style.justifyContent = 'center';
-listItems.style.gap = '20px';
-listItems.style.flexWrap = 'wrap';
-document.body.style.display = 'flex';
-document.body.style.flexDirection = 'column';
-document.body.style.alignItems = 'center';
+
 const unplashApi = new UnplashApi();
 
 const onSearchFormSubmit = async event => {
@@ -38,7 +32,12 @@ const onSearchFormSubmit = async event => {
     }
 
     listItems.innerHTML = renderPhotoList(data.hits);
-    loadMoreBtn.style.display = 'block';
+    if (unplashApi.perPage > data.totalHits) {
+      alertEndOfSearch();
+      loadMoreBtn.style.display = 'none';
+    } else {
+      loadMoreBtn.style.display = 'block';
+    }
   } catch (err) {
     console.log('error');
   }
@@ -67,41 +66,6 @@ function alertEndOfSearch() {
   );
 }
 
-function renderPhotoList(data) {
-  return data
-    .map(
-      ({
-        webformatURL,
-        largeImageURL,
-        tags,
-        likes,
-        views,
-        comments,
-        downloads,
-      }) => {
-        return `<li class="list-item">
-      <div class="photo-card">
-      <img src="${webformatURL}" alt="${tags}" loading="lazy" width="450" height="250"  />
-      <div class="info">
-        <p class="info-item" >
-          <b>Likes</b>${likes}
-        </p>
-        <p class="info-item">
-          <b>Views</b>${views}
-        </p>
-        <p class="info-item">
-          <b>Comments</b>${comments}
-        </p>
-        <p class="info-item">
-          <b>Downloads</b>${downloads}
-        </p>
-      </div>
-    </div>
-            </li>`;
-      }
-    )
-    .join('');
-}
 const onLoadMoreBntClick = event => {
   unplashApi.page += 1;
 
@@ -111,6 +75,7 @@ const onLoadMoreBntClick = event => {
       const totalPage = Math.ceil(data.data.totalHits / unplashApi.perPage);
       if (unplashApi.page > totalPage) {
         alertEndOfSearch();
+        loadMoreBtn.style.display = 'none';
       }
       listItems.insertAdjacentHTML(
         'beforeend',
